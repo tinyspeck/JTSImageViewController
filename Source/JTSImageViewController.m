@@ -1507,11 +1507,14 @@ UIGestureRecognizerDelegate
             allowCopy = [self.interactionsDelegate imageViewerAllowCopyToPasteboard:self];
         }
         
-        if (allowCopy) {
+        if (allowCopy && [self canBecomeFirstResponder]) {
             CGPoint location = [sender locationInView:self.imageView];
-            UIMenuController *menuController = [UIMenuController sharedMenuController];
+            CGRect targetRect = CGRectMake(location.x, location.y, 0.0f, 0.0f);
             
-            [menuController setTargetRect:CGRectMake(location.x, location.y, 0.0f, 0.0f) inView:self.imageView];
+            UIMenuController *menuController = [UIMenuController sharedMenuController];
+            menuController.arrowDirection = UIMenuControllerArrowDown;
+            
+            [menuController setTargetRect:targetRect inView:self.imageView];
             [menuController setMenuVisible:YES animated:YES];
         }
     }
@@ -1729,7 +1732,17 @@ UIGestureRecognizerDelegate
 }
 
 - (void)copy:(id)sender {
-    [[UIPasteboard generalPasteboard] setImage:self.image];
+    
+    dispatch_queue_t exampleQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
+    dispatch_async(exampleQueue, ^{
+        
+        NSData *data = UIImagePNGRepresentation(self.image);
+        UIImage *image = [UIImage imageWithData:data];
+        
+        if (image && [image isKindOfClass:[UIImage class]]) {
+            [[UIPasteboard generalPasteboard] setImage:image];
+        }
+    });
 }
 
 #pragma mark - Accessibility
