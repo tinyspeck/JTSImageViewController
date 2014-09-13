@@ -1509,10 +1509,10 @@ UIGestureRecognizerDelegate
         
         if (allowCopy && [self canBecomeFirstResponder]) {
             CGPoint location = [sender locationInView:self.imageView];
-            CGRect targetRect = CGRectMake(location.x, location.y, 0.0f, 0.0f);
+            CGRect targetRect = CGRectMake(location.x, location.y, 0.0, 0.0);
             
             UIMenuController *menuController = [UIMenuController sharedMenuController];
-            menuController.arrowDirection = UIMenuControllerArrowDown;
+            menuController.arrowDirection = UIMenuControllerArrowDefault;
             
             [menuController setTargetRect:targetRect inView:self.imageView];
             [menuController setMenuVisible:YES animated:YES];
@@ -1721,6 +1721,10 @@ UIGestureRecognizerDelegate
         return YES;
     }
     return NO;
+}
+
+- (BOOL)canResignFirstResponder {
+    return [UIMenuController sharedMenuController].isMenuVisible;
 }
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender {
