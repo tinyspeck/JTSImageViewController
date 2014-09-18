@@ -1717,9 +1717,8 @@ UIGestureRecognizerDelegate
 
 - (BOOL)canBecomeFirstResponder {
     
-    if (self.image) {
-        return YES;
-    }
+    // Never. Was causing issues when dismissed.
+    // TODO: figure out more about what this is used for
     return NO;
 }
 
